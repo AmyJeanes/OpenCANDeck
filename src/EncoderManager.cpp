@@ -4,12 +4,15 @@
 EncoderManager::EncoderManager(uint8_t switchPin, uint8_t pixelPin)
     : _pixel(1, pixelPin, NEO_GRB + NEO_KHZ800), _switchPin(switchPin), _pixelPin(pixelPin) {}
 
-bool EncoderManager::begin(uint8_t address, uint8_t brightness) {
-    if (!_ss.begin(address) || !_pixel.begin(address)) {
+bool EncoderManager::begin(uint8_t address, uint8_t brightness)
+{
+    if (!_ss.begin(address) || !_pixel.begin(address))
+    {
         return false;
     }
     uint32_t version = ((_ss.getVersion() >> 16) & 0xFFFF);
-    if (version != 4991) {
+    if (version != 4991)
+    {
         Serial.print("Warning: unexpected encoder product ID: ");
         Serial.println(version);
     }
@@ -22,7 +25,8 @@ bool EncoderManager::begin(uint8_t address, uint8_t brightness) {
     return true;
 }
 
-void EncoderManager::update() {
+void EncoderManager::update()
+{
     bool currentPressed = !_ss.digitalRead(_switchPin);
     _justPressed = (currentPressed && !_pressed);
     _justReleased = (!currentPressed && _pressed);
@@ -30,20 +34,31 @@ void EncoderManager::update() {
 
     int32_t newPos = _ss.getEncoderPosition();
     bool moved = newPos != _position;
-    if (moved) {
+    if (moved)
+    {
         _position = newPos;
         Serial.print("Encoder: ");
         Serial.println(_position);
     }
 
-    if (_pressed) {
+    bool needShow = false;
+    if (_pressed)
+    {
         _pixel.setPixelColor(0, _pixel.Color(255, 0, 0));
-    } else if (moved || _justReleased) {
-        _pixel.setPixelColor(0, ColorUtils::wheel(_pixel, _position & 0xFF));
+        needShow = true;
     }
-    _pixel.show();
+    else if (moved || _justReleased)
+    {
+        _pixel.setPixelColor(0, ColorUtils::wheel(_pixel, _position & 0xFF));
+        needShow = true;
+    }
+    if (needShow)
+    {
+        _pixel.show();
+    }
 
-    if (_justPressed) {
+    if (_justPressed)
+    {
         Serial.println("Encoder button pressed!");
     }
 }

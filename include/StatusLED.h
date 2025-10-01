@@ -2,9 +2,11 @@
 #include <Arduino.h>
 #include <stdint.h>
 
-class StatusLED {
+class StatusLED
+{
 public:
-    enum class State : uint8_t {
+    enum class State : uint8_t
+    {
         Off,
         Waiting,
         Ok,
@@ -29,7 +31,7 @@ private:
     uint8_t _powerPin;
     uint8_t _dataPin;
     uint8_t _brightness;
-    State   _state{State::Off};
+    State _state{State::Off};
     uint32_t _lastAnimMs{0};
     uint8_t _animPhase{0};
 };

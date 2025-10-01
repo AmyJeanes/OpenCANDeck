@@ -5,7 +5,8 @@
 #include "Adafruit_seesaw.h"
 #include "seesaw_neopixel.h"
 
-class EncoderManager {
+class EncoderManager
+{
 public:
     EncoderManager(uint8_t switchPin, uint8_t pixelPin);
     bool begin(uint8_t address, uint8_t brightness);
@@ -15,6 +16,7 @@ public:
     bool buttonPressed() const { return _pressed; }
     bool buttonJustPressed() const { return _justPressed; }
     bool buttonJustReleased() const { return _justReleased; }
+
 private:
     Adafruit_seesaw _ss;
     seesaw_NeoPixel _pixel; // constructed with (n, pin, type)

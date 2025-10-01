@@ -4,7 +4,8 @@
 #include <Arduino.h>
 #include "Adafruit_NeoKey_1x4.h"
 
-class NeoKeyManager {
+class NeoKeyManager
+{
 public:
     bool begin(uint8_t address);
     void update();
@@ -24,5 +25,5 @@ private:
     uint32_t _pressedColor = 0; // GRB packed color
 
     uint16_t _debounceMs = 0; // 0 = disabled
-    uint32_t _lastChangeTime[4] = {0,0,0,0};
+    uint32_t _lastChangeTime[4] = {0, 0, 0, 0};
 };

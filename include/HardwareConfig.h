@@ -17,8 +17,8 @@ constexpr uint8_t ENCODER_PIXEL_BRIGHTNESS = 20; // range 0-255
 // Timing
 
 // Individual component polling intervals (ms). Tuned to balance responsiveness & CPU.
-constexpr uint16_t KEYPAD_SCAN_INTERVAL_MS = 2;  // Key debounce & human reaction >> 2ms
-constexpr uint16_t ENCODER_SCAN_INTERVAL_MS = 2; // Fast enough for quick spins
+constexpr uint16_t KEYPAD_SCAN_INTERVAL_MS = 10;  // Key debounce & human reaction >> 2ms
+constexpr uint16_t ENCODER_SCAN_INTERVAL_MS = 10; // Fast enough for quick spins
 
 // CAN bus configuration
 constexpr uint32_t CAN_BAUDRATE = 500000; // bits per second

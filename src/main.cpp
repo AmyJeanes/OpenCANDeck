@@ -35,6 +35,7 @@ void setup()
         }
     }
     g_keypad.setPressedColor(seesaw_NeoPixel::Color(0, 180, 60));
+    g_keypad.setDebounceTime(50); // 50ms debounce time
 
     if (!g_encoder.begin(ENCODER_I2C_ADDR, ENCODER_PIXEL_BRIGHTNESS))
     {
@@ -125,44 +126,47 @@ void loop()
 
     uint8_t jp = g_keypad.justPressed();
     uint8_t jr = g_keypad.justReleased();
-    if (jp)
+    if (jp || jr)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        if (jp)
         {
-            if (jp & (1 << i))
+            for (uint8_t i = 0; i < 4; i++)
             {
-                Serial.print(F("Key "));
-                Serial.print(i);
-                Serial.println(F(" pressed"));
-                // Debug toggles
-                if (i == 0)
+                if (jp & (1 << i))
                 {
-                    static bool raw = false;
-                    raw = !raw;
-                    g_can.setDebugRaw(raw);
-                    Serial.print(F("CAN raw debug="));
-                    Serial.println(raw ? F("ON") : F("OFF"));
-                }
-                else if (i == 1)
-                {
-                    static bool dec = true;
-                    dec = !dec;
-                    g_can.setDebugDecoded(dec);
-                    Serial.print(F("CAN decoded debug="));
-                    Serial.println(dec ? F("ON") : F("OFF"));
+                    Serial.print(F("Key "));
+                    Serial.print(i);
+                    Serial.println(F(" pressed"));
+                    // Debug toggles
+                    if (i == 0)
+                    {
+                        static bool raw = false;
+                        raw = !raw;
+                        g_can.setDebugRaw(raw);
+                        Serial.print(F("CAN raw debug="));
+                        Serial.println(raw ? F("ON") : F("OFF"));
+                    }
+                    else if (i == 1)
+                    {
+                        static bool dec = true;
+                        dec = !dec;
+                        g_can.setDebugDecoded(dec);
+                        Serial.print(F("CAN decoded debug="));
+                        Serial.println(dec ? F("ON") : F("OFF"));
+                    }
                 }
             }
         }
-    }
-    if (jr)
-    {
-        for (uint8_t i = 0; i < 4; i++)
+        if (jr)
         {
-            if (jr & (1 << i))
+            for (uint8_t i = 0; i < 4; i++)
             {
-                Serial.print(F("Key "));
-                Serial.print(i);
-                Serial.println(F(" released"));
+                if (jr & (1 << i))
+                {
+                    Serial.print(F("Key "));
+                    Serial.print(i);
+                    Serial.println(F(" released"));
+                }
             }
         }
     }

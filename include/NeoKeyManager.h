@@ -10,10 +10,11 @@ public:
     bool begin(uint8_t address);
     void update();
     void setPressedColor(uint32_t color) { _pressedColor = color; }
+    void setDebounceTime(uint16_t ms) { _debounceMs = ms; }
     uint8_t buttons() const { return _currentButtons; }
     uint8_t buttonsChanged() const { return _changedMask; }
-    uint8_t justPressed() const { return _justPressedMask; }
-    uint8_t justReleased() const { return _justReleasedMask; }
+    uint8_t justPressed();
+    uint8_t justReleased();
 
 private:
     Adafruit_NeoKey_1x4 _neokey;

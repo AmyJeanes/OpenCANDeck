@@ -63,7 +63,7 @@ void setup()
     {
         Serial.println(F("MCP2515 CAN controller initialized."));
         // Enable decoded output by default; raw traffic can be toggled later.
-        g_can.setDebugDecoded(true);
+        g_can.setDebugDecoded(false);
         g_can.setDebugRaw(false);
     }
 
@@ -148,7 +148,7 @@ void loop()
                     }
                     else if (i == 1)
                     {
-                        static bool dec = true;
+                        static bool dec = false;
                         dec = !dec;
                         g_can.setDebugDecoded(dec);
                         Serial.print(F("CAN decoded debug="));

@@ -36,7 +36,16 @@ public:
 
     bool begin(uint32_t bitrate = CAN_BAUDRATE)
     {
-        return _mcp.begin(bitrate);
+        if (!_mcp.begin(bitrate))
+            return false;
+
+        // Exact-match 0x103 and 0x3F5; enable rollover
+        const uint16_t ids[] = {0x103, 0x3F5};
+        int n = _mcp.setStandardFilters(ids, 2, 0x7FF, 0x7FF, true);
+        if (n < 2)
+            return false;
+
+        return true;
     }
 
     void setDebugRaw(bool enabled) { _debugRaw = enabled; }

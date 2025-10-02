@@ -103,3 +103,12 @@ uint8_t NeoKeyManager::justReleased()
     _justReleasedMask = 0;
     return returnMask;
 }
+
+void NeoKeyManager::setKeyColor(uint8_t keyIndex, uint8_t r, uint8_t g, uint8_t b)
+{
+    if (keyIndex < 4)
+    {
+        _neokey.pixels.setPixelColor(keyIndex, r, g, b);
+        _neokey.pixels.show();
+    }
+}

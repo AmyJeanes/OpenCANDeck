@@ -95,32 +95,34 @@ void loop()
     // Status LED animation already self-throttles internally
     g_statusLed.update();
 
-    // React to VCFRONT_indicatorLeftRequest: illuminate LED when active.
+    // React to VCFRONT_indicator requests: illuminate button LEDs to show indicator status
     if (g_can.hasNewFrontLighting())
     {
-        static CANManager::IndicatorLeftReq lastLeft = (CANManager::IndicatorLeftReq)0xFF; // force first update
+        static CANManager::IndicatorReq lastLeft = (CANManager::IndicatorReq)0xFF;
+        static CANManager::IndicatorReq lastRight = (CANManager::IndicatorReq)0xFF;
         auto fl = g_can.getFrontLighting();
+
         if (fl.indicatorLeftRequest != lastLeft)
         {
-            switch (fl.indicatorLeftRequest)
-            {
-            case CANManager::IndicatorLeftReq::Off:
-                g_statusLed.setState(StatusLED::State::Off);
-                break;
-            case CANManager::IndicatorLeftReq::ActiveLow:
-                // Use a dimmer amber to differentiate
-                g_statusLed.setColor(120, 40, 0);
-                break;
-            case CANManager::IndicatorLeftReq::ActiveHigh:
-                // Brighter amber
-                g_statusLed.setColor(255, 120, 0);
-                break;
-            case CANManager::IndicatorLeftReq::Unknown:
-                // Magenta to indicate unexpected value
-                g_statusLed.setColor(200, 0, 150);
-                break;
+            bool isLeftActive = fl.indicatorLeftRequest == CANManager::IndicatorReq::ActiveLow || fl.indicatorLeftRequest == CANManager::IndicatorReq::ActiveHigh;
+            bool isLeftHigh = fl.indicatorLeftRequest == CANManager::IndicatorReq::ActiveHigh;
+            if(isLeftActive) {
+                g_keypad.setKeyColor(2, isLeftHigh ? 255 : 128, isLeftHigh ? 120 : 60, 0);
+            } else {
+                g_keypad.setKeyColor(2, 0, 0, 0);
             }
             lastLeft = fl.indicatorLeftRequest;
+        }
+        if (fl.indicatorRightRequest != lastRight)
+        {
+            bool isRightActive = fl.indicatorRightRequest == CANManager::IndicatorReq::ActiveLow || fl.indicatorRightRequest == CANManager::IndicatorReq::ActiveHigh;
+            bool isRightHigh = fl.indicatorRightRequest == CANManager::IndicatorReq::ActiveHigh;
+            if(isRightActive) {
+                g_keypad.setKeyColor(3, isRightHigh ? 255 : 128, isRightHigh ? 120 : 60, 0);
+            } else {
+                g_keypad.setKeyColor(3, 0, 0, 0);
+            }
+            lastRight = fl.indicatorRightRequest;
         }
     }
 
@@ -154,6 +156,14 @@ void loop()
                         Serial.print(F("CAN decoded debug="));
                         Serial.println(dec ? F("ON") : F("OFF"));
                     }
+                    else if (i == 2) // Left indicator
+                    {
+                        g_can.sendTurnSignalCommand(CANManager::TurnIndicatorStalkStatus::Down2);
+                    }
+                    else if (i == 3) // Right indicator
+                    {
+                        g_can.sendTurnSignalCommand(CANManager::TurnIndicatorStalkStatus::Up2);
+                    }
                 }
             }
         }
@@ -166,6 +176,12 @@ void loop()
                     Serial.print(F("Key "));
                     Serial.print(i);
                     Serial.println(F(" released"));
+
+                    // If releasing an indicator button, send the 'off' command
+                    if (i == 2 || i == 3)
+                    {
+                        g_can.sendTurnSignalCommand(CANManager::TurnIndicatorStalkStatus::Idle);
+                    }
                 }
             }
         }

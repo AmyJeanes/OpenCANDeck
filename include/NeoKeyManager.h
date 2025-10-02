@@ -11,6 +11,7 @@ public:
     void update();
     void setPressedColor(uint32_t color) { _pressedColor = color; }
     void setDebounceTime(uint16_t ms) { _debounceMs = ms; }
+    void setKeyColor(uint8_t keyIndex, uint8_t r, uint8_t g, uint8_t b);
     uint8_t buttons() const { return _currentButtons; }
     uint8_t buttonsChanged() const { return _changedMask; }
     uint8_t justPressed();

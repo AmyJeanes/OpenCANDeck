@@ -39,11 +39,24 @@ public:
         if (!_mcp.begin(bitrate))
             return false;
 
-        // Exact-match 0x103 and 0x3F5; enable rollover
-        const uint16_t ids[] = {0x103, 0x3F5};
-        int n = _mcp.setStandardFilters(ids, 2, 0x7FF, 0x7FF, true);
-        if (n < 2)
+        // Filter for exactly 0x103 (door status) and 0x3F5 (front lighting)
+        // All other messages are ignored on the first mask
+        if (!_mcp.setFilterMask(0, false, 0x7FF) ||
+            !_mcp.setFilter(0, false, 0x103) ||
+            !_mcp.setFilter(1, false, 0x3F5))
+        {
             return false;
+        }
+
+        // Filter out all messages on the second mask
+        if (!_mcp.setFilterMask(1, false, 0x7FF) ||
+            !_mcp.setFilter(2, false, 0x000) ||
+            !_mcp.setFilter(3, false, 0x000) ||
+            !_mcp.setFilter(4, false, 0x000) ||
+            !_mcp.setFilter(5, false, 0x000))
+        {
+            return false;
+        }
 
         return true;
     }
